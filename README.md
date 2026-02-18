@@ -14,38 +14,40 @@ Website: https://www.pmaccelerator.io/ | LinkedIn: https://www.linkedin.com/scho
 
 ## Project Overview
 
-This project analyzes the **Global Weather Repository** dataset, covering 124,721 records across 34 features from 256 capital cities worldwide. The goal is to forecast future weather trends using both basic and advanced data science techniques.
+Global weather data from 256 capital cities (124,721 records, 34 features) analyzed end-to-end: cleaning, exploration, forecasting, and advanced climate/air quality analysis. The forecasting target is daily mean temperature in Washington Harbor, predicted using lag features, rolling means, and calendar variables.
 
-**Dataset Source**: https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository
+**Dataset**: [Global Weather Repository](https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository) (Kaggle)
 
-## Key Analyses Performed
+## Notebooks
 
-1. **Data Cleaning & Preprocessing** (`01_data_cleaning.ipynb`) - Handles missing values, removes duplicate unit columns, detects and caps outliers using IQR, and normalizes numeric features with StandardScaler.
-2. **Exploratory Data Analysis** (`02_eda.ipynb`) - Explores temperature distributions, precipitation patterns, correlation heatmaps, and time series trends. Includes anomaly detection using Isolation Forest and Z-score methods.
-3. **Weather Forecasting Models** (`03_forecasting.ipynb`) - Builds, trains, and evaluates 5 forecasting models with an ensemble approach. Includes feature engineering (lag features, rolling means) and feature importance analysis.
-4. **Advanced Analysis** (`04_advanced_analysis.ipynb`) - Conducts climate analysis by continent and hemisphere, examines air quality correlations with weather, creates interactive spatial maps, and analyzes geographical patterns.
+| Notebook | What it does |
+|----------|-------------|
+| `01_data_cleaning.ipynb` | Missing value imputation, duplicate unit column removal, IQR-based outlier capping, StandardScaler normalization demo |
+| `02_eda.ipynb` | Temperature/precipitation distributions, correlation heatmap, humidity and pressure trends, anomaly detection (Isolation Forest + Z-score) |
+| `03_forecasting.ipynb` | 5 models trained on Washington Harbor daily temperature, ensemble of top 3, feature importance comparison (3 methods) |
+| `04_advanced_analysis.ipynb` | Continent-level climate trends, hemisphere seasonality, air quality vs weather correlations, interactive Folium maps, latitude-temperature regression |
 
-## Models Built
+## Forecasting Models
 
-| Model | Description |
-|-------|-------------|
-| Linear Regression | Baseline model |
-| Random Forest Regressor | Tree-based ensemble |
-| XGBoost / GradientBoosting | Gradient boosted trees |
-| SARIMA | Seasonal time series model (statsmodels) |
-| Prophet / SARIMA Variant | Additional time series model |
-| **Ensemble** | Weighted average of top 3 models |
+Five models trained on Washington Harbor daily mean temperature with an 80/20 chronological split:
 
-All models are evaluated with **MAE**, **RMSE**, **MAPE**, and **R-squared** metrics, with a comparison table and actual vs. predicted visualizations.
+| Model | Role in pipeline |
+|-------|-----------------|
+| Linear Regression | Baseline. Lag and rolling features carry enough signal for a simple linear combination to perform well. |
+| Random Forest | Captures non-linear interactions (e.g., season-dependent lag behavior) that the baseline misses. |
+| XGBoost | Sequential error correction on structured tabular data. Falls back to sklearn GradientBoosting if unavailable. |
+| SARIMA | Works directly on the raw temperature series without engineered features. Weekly seasonality (s=7). |
+| Prophet / SARIMA Variant | Automatic yearly and weekly seasonality detection. Falls back to SARIMA with monthly seasonality (s=30) on Python 3.14. |
+| **Ensemble** | Simple average of the top 3 models by RMSE. |
 
-## Advanced Analyses
+**Best individual model**: Linear Regression (MAE: 2.15, RMSE: 2.64). All models evaluated on MAE, RMSE, MAPE, and R-squared. Note: MAPE is unreliable for this dataset because Washington Harbor winter temperatures approach 0 degrees C, causing near-zero division. MAE and RMSE are the more meaningful metrics here.
 
-- **Climate Analysis** - Long-term temperature trends by continent, seasonal patterns (Northern vs. Southern Hemisphere), temperature variability by country
-- **Environmental Impact** - Air quality pollutant correlations with weather variables, PM2.5/PM10 analysis by weather condition
-- **Anomaly Detection** - Isolation Forest and Z-score methods to identify extreme weather events
-- **Spatial Analysis** - Interactive Folium world maps for temperature and PM2.5 distributions by city
-- **Geographical Patterns** - Temperature distribution by continent, latitude vs. temperature regression, weather conditions by continent
-- **Feature Importance** - Random Forest, XGBoost, and permutation importance compared side by side
+## Key Findings
+
+- **Forecasting**: Lag features (especially lag_1) dominate feature importance across all three methods (Random Forest, XGBoost, permutation). The ensemble slightly improves on the best individual model.
+- **Climate patterns**: Northern Hemisphere continents show strong seasonal swings; Southern Hemisphere (dominated by tropical Africa) stays relatively flat. Countries with the highest temperature variability sit at mid-to-high latitudes with continental climates.
+- **Air quality**: Ozone formation is temperature-driven (photochemical). PM2.5 and PM10 decrease with wind speed (dispersion). Pollution hotspots concentrate in South Asia and parts of Africa/Middle East.
+- **Spatial**: Interactive Folium maps (HTML in `outputs/`) show temperature and PM2.5 distributions across all 256 cities.
 
 ## Tech Stack
 
@@ -54,9 +56,8 @@ All models are evaluated with **MAE**, **RMSE**, **MAPE**, and **R-squared** met
 - **Visualization**: matplotlib, seaborn, plotly
 - **Machine Learning**: scikit-learn, xgboost
 - **Time Series**: statsmodels (SARIMA), prophet
-- **Spatial**: folium (interactive maps)
+- **Spatial**: folium
 - **Statistical**: scipy
-- **Report**: Jupyter Notebook
 
 ## Project Structure
 
@@ -91,13 +92,7 @@ weather-data-analysis/
 
 3. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository) and place `GlobalWeatherRepository.csv` in the `data/` folder.
 
-4. Open the notebooks in order (01 through 04) in Jupyter:
+4. Run the notebooks in order (01 through 04):
    ```bash
    jupyter notebook
    ```
-
-## Results Highlights
-
-- 5 forecasting models compared with a weighted ensemble approach that combines the top performers
-- Interactive world maps visualizing temperature and air quality distributions across 256 cities (HTML files in `outputs/`)
-- Comprehensive climate and air quality analysis spanning 6 continents, revealing seasonal patterns, pollution hotspots, and geographical trends
