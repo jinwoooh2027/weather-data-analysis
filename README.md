@@ -14,7 +14,7 @@ Website: https://www.pmaccelerator.io/ | LinkedIn: https://www.linkedin.com/scho
 
 ## Project Overview
 
-Global weather data from 256 capital cities (124,721 records, 34 features) analyzed end-to-end: cleaning, exploration, forecasting, and advanced climate/air quality analysis. The forecasting target is daily mean temperature in Washington Harbor, predicted using lag features, rolling means, and calendar variables.
+Global weather data from 256 capital cities (124,721 records, 34 features) analyzed end-to-end: cleaning, exploration, forecasting, and advanced climate/air quality analysis. The forecasting target is daily mean temperature in Minsk, predicted using lag features, rolling means, and calendar variables.
 
 **Dataset**: [Global Weather Repository](https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository) (Kaggle)
 
@@ -24,12 +24,12 @@ Global weather data from 256 capital cities (124,721 records, 34 features) analy
 |----------|-------------|
 | `01_data_cleaning.ipynb` | Missing value imputation, duplicate unit column removal, IQR-based outlier capping, StandardScaler normalization demo |
 | `02_eda.ipynb` | Temperature/precipitation distributions, correlation heatmap, humidity and pressure trends, anomaly detection (Isolation Forest + Z-score) |
-| `03_forecasting.ipynb` | 5 models trained on Washington Harbor daily temperature, ensemble of top 3, feature importance comparison (3 methods) |
+| `03_forecasting.ipynb` | 5 models trained on Minsk daily temperature, ensemble of top 3, feature importance comparison (3 methods) |
 | `04_advanced_analysis.ipynb` | Continent-level climate trends, hemisphere seasonality, air quality vs weather correlations, interactive Folium maps, latitude-temperature regression |
 
 ## Forecasting Models
 
-Five models trained on Washington Harbor daily mean temperature with an 80/20 chronological split:
+Five models trained on Minsk daily mean temperature with an 80/20 chronological split:
 
 | Model | Role in pipeline |
 |-------|-----------------|
@@ -40,7 +40,7 @@ Five models trained on Washington Harbor daily mean temperature with an 80/20 ch
 | Prophet / SARIMA Variant | Automatic yearly and weekly seasonality detection. Falls back to SARIMA with monthly seasonality (s=30) on Python 3.14. |
 | **Ensemble** | Simple average of the top 3 models by RMSE. |
 
-**Best individual model**: Linear Regression (MAE: 2.15, RMSE: 2.64). All models evaluated on MAE, RMSE, MAPE, and R-squared. Note: MAPE is unreliable for this dataset because Washington Harbor winter temperatures approach 0 degrees C, causing near-zero division. MAE and RMSE are the more meaningful metrics here.
+**Best individual model**: Linear Regression (MAE: 1.32, RMSE: 1.77, R2: 0.69). All models evaluated on MAE, RMSE, MAPE, and R-squared. Note: MAPE is unreliable for this dataset because Minsk winter temperatures approach and cross 0 degrees C, causing near-zero division. MAE and RMSE are the more meaningful metrics here.
 
 ## Key Findings
 
